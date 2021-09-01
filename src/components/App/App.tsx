@@ -1,12 +1,73 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import ProtectedRoute from '../../hocs/ProtectedRoute/ProtectedRoute';
+import Login from '../Login/Login';
+import Main from '../Main/Main';
 import './App.css';
+import { handleLoginProps } from '../../interfaces/handleLoginProps';
+import { Modal } from 'antd';
 
-function App() {
+const SECRET_KEY = 'testkey';
+
+const App: React.FC = (): JSX.Element => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const history = useHistory();
+
+  const handleLogin = ({ username, password }: handleLoginProps): void => {
+    if (username.trim() === 'user' && password.trim() === 'user') {
+      localStorage.setItem('token', SECRET_KEY);
+      setIsLoggedIn(true);
+      history.push('/main');
+    } else {
+      Modal.error({
+        title: 'Вы ввели неверные данные для входа',
+      });
+    }
+  };
+
+  const handleSignout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    Modal.info({
+      title: 'Вы успешно вышли из системы',
+    });
+    history.push('/signin');
+  };
+
+  const loginCheck = (): void => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const isTokenCorrect = token === SECRET_KEY;
+
+      if (isTokenCorrect) {
+        setIsLoggedIn(true);
+        history.push('/main');
+      }
+    }
+  };
+
+  useEffect(() => {
+    loginCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="App">
-
+    <div className='App'>
+      <Switch>
+        <Route path='/signin'>
+          <Login onLogin={handleLogin} />
+        </Route>
+        <ProtectedRoute
+          path='/main'
+          component={Main}
+          isLoggedIn={isLoggedIn}
+          onSignout={handleSignout}
+        />
+        <Route path='/*'>{isLoggedIn ? <Redirect to='/main' /> : <Redirect to='/signin' />}</Route>
+      </Switch>
     </div>
   );
-}
+};
 
 export default App;
