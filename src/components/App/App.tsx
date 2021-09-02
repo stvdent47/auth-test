@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
 import ProtectedRoute from '../../hocs/ProtectedRoute/ProtectedRoute';
 import Login from '../Login/Login';
@@ -13,28 +13,33 @@ const App: React.FC = (): JSX.Element => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const history = useHistory();
 
-  const handleLogin = ({ username, password }: handleLoginProps): void => {
-    if (username.trim() === 'user' && password.trim() === 'user') {
-      localStorage.setItem('token', SECRET_KEY);
-      setIsLoggedIn(true);
-      history.push('/main');
-    } else {
-      Modal.error({
-        title: 'Вы ввели неверные данные для входа',
-      });
-    }
-  };
+  const handleLogin = useCallback(
+    ({ username, password }: handleLoginProps): void => {
+      if (username.trim() === 'user' && password.trim() === 'user') {
+        localStorage.setItem('token', SECRET_KEY);
+        setIsLoggedIn(true);
+        history.push('/main');
+      } else {
+        Modal.error({
+          title: 'Вы ввели неверные данные для входа',
+        });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-  const handleSignout = () => {
+  const handleSignout = useCallback((): void => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
     Modal.info({
       title: 'Вы успешно вышли из системы',
     });
     history.push('/signin');
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const loginCheck = (): void => {
+  const loginCheck = useCallback((): void => {
     const token = localStorage.getItem('token');
 
     if (token) {
@@ -45,7 +50,8 @@ const App: React.FC = (): JSX.Element => {
         history.push('/main');
       }
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     loginCheck();

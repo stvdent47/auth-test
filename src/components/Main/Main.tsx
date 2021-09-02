@@ -1,3 +1,4 @@
+import React from 'react';
 import 'antd/dist/antd.css';
 
 import { Button, Space, Typography } from 'antd';
@@ -24,4 +25,4 @@ const Main: React.FC<IMainProps> = ({ onSignout }): JSX.Element => {
   );
 };
 
-export default Main;
+export default React.memo(Main);
