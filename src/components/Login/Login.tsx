@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import 'antd/dist/antd.css';
 import { Button, Input, Space, Typography } from 'antd';
 import { Form, Field } from 'react-final-form';
@@ -24,6 +24,23 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const LoginButton = (pristine: boolean, hasValidationErrors: boolean, submitting: boolean) =>
+    useMemo(
+      () => (
+        <Button
+          htmlType='submit'
+          type='primary'
+          size='large'
+          disabled={pristine || hasValidationErrors || submitting}
+        >
+          Войти
+          {Math.random()}
+        </Button>
+      ),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [hasValidationErrors, submitting]
+    );
 
   return (
     <Space style={{ height: '100vh' }}>
@@ -59,14 +76,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 )}
               />
             </div>
-            <Button
-              htmlType='submit'
-              type='primary'
-              size='large'
-              disabled={pristine || hasValidationErrors || submitting}
-            >
-              Войти
-            </Button>
+            {LoginButton(pristine, hasValidationErrors, submitting)}
           </form>
         )}
       />
