@@ -1,46 +1,51 @@
-import React, { useMemo, useCallback } from 'react';
-import 'antd/dist/antd.css';
-import { Button, Input, Space, Typography } from 'antd';
-import { Form, Field } from 'react-final-form';
+import React, { useCallback } from 'react';
+import { useHistory } from 'react-router';
+import { Input, Space, Typography, Modal } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
+import 'antd/dist/antd.css';
+import { Form, Field } from 'react-final-form';
 import { handleLoginProps } from '../../interfaces/handleLoginProps';
-import validate from './lib/validate';
+import { LoginButton } from './LoginButton';
+import { validate } from './lib/validate';
+
+const SECRET_KEY = 'testkey';
 
 interface submitValues {
   username: string;
   password: string;
 }
-interface LoginProps {
-  onLogin: ({ username, password }: handleLoginProps) => void;
-}
+type LoginProps = {
+  setIsLoggedIn: (state: boolean) => void;
+};
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+export const Login: React.FC<LoginProps> = ({ setIsLoggedIn }): JSX.Element => {
+  const history = useHistory();
+
+  const handleLogin = useCallback(
+    ({ username, password }: handleLoginProps): void => {
+      if (username.trim() === 'user' && password.trim() === 'user') {
+        localStorage.setItem('token', SECRET_KEY);
+        setIsLoggedIn(true);
+        history.push('/main');
+      } else {
+        Modal.error({
+          title: 'Вы ввели неверные данные для входа',
+        });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const onSubmit = useCallback((evt: submitValues): void => {
     const { username, password } = evt;
 
-    onLogin({
+    handleLogin({
       username,
       password,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const LoginButton = (pristine: boolean, hasValidationErrors: boolean, submitting: boolean) =>
-    useMemo(
-      () => (
-        <Button
-          htmlType='submit'
-          type='primary'
-          size='large'
-          disabled={pristine || hasValidationErrors || submitting}
-        >
-          Войти
-          {Math.random()}
-        </Button>
-      ),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [hasValidationErrors, submitting]
-    );
 
   return (
     <Space style={{ height: '100vh' }}>
@@ -57,7 +62,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     help={meta.touched && meta.error && meta.error}
                     validateStatus={meta.touched ? (meta.error ? 'error' : 'success') : undefined}
                   >
-                    <Input size='large' style={{ width: '330px' }} {...input} />
+                    <Input size='large' style={{ width: '330px' }} autoComplete='off' {...input} />
                   </FormItem>
                 )}
               </Field>
@@ -76,12 +81,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 )}
               />
             </div>
-            {LoginButton(pristine, hasValidationErrors, submitting)}
+            <LoginButton
+              pristine={pristine}
+              hasValidationErrors={hasValidationErrors}
+              submitting={submitting}
+            />
           </form>
         )}
       />
     </Space>
   );
 };
-
-export default Login;
