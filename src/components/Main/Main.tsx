@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { Button, Space, Typography, Modal } from 'antd';
 import 'antd/dist/antd.css';
@@ -9,7 +9,7 @@ interface MainProps {
   setIsLoggedIn: (state: boolean) => void;
 }
 
-export const Main: React.FC<MainProps> = React.memo(({ setIsLoggedIn }): JSX.Element => {
+export const Main: React.FC<MainProps> = memo(({ setIsLoggedIn }): JSX.Element => {
   const history = useHistory();
 
   const handleSignout = useCallback((): void => {

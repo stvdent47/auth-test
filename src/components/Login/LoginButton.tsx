@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Button } from 'antd';
 
 interface LoginButtonProps {
@@ -7,7 +7,7 @@ interface LoginButtonProps {
   submitting: boolean;
 }
 
-export const LoginButton: React.FC<LoginButtonProps> = React.memo(
+export const LoginButton: React.FC<LoginButtonProps> = memo(
   ({ pristine, hasValidationErrors, submitting }) => (
     <Button
       htmlType='submit'
