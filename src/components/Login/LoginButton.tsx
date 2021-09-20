@@ -7,19 +7,15 @@ interface LoginButtonProps {
   submitting: boolean;
 }
 
-const LoginButtonComponent: React.FC<LoginButtonProps> = ({
-  pristine,
-  hasValidationErrors,
-  submitting,
-}) => (
-  <Button
-    htmlType='submit'
-    type='primary'
-    size='large'
-    disabled={pristine || hasValidationErrors || submitting}
-  >
-    Войти
-  </Button>
+export const LoginButton: React.FC<LoginButtonProps> = React.memo(
+  ({ pristine, hasValidationErrors, submitting }) => (
+    <Button
+      htmlType='submit'
+      type='primary'
+      size='large'
+      disabled={pristine || hasValidationErrors || submitting}
+    >
+      Войти
+    </Button>
+  )
 );
-
-export const LoginButton = React.memo(LoginButtonComponent);

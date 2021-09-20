@@ -9,7 +9,7 @@ interface MainProps {
   setIsLoggedIn: (state: boolean) => void;
 }
 
-const MainComponent: React.FC<MainProps> = ({ setIsLoggedIn }): JSX.Element => {
+export const Main: React.FC<MainProps> = React.memo(({ setIsLoggedIn }): JSX.Element => {
   const history = useHistory();
 
   const handleSignout = useCallback((): void => {
@@ -36,6 +36,4 @@ const MainComponent: React.FC<MainProps> = ({ setIsLoggedIn }): JSX.Element => {
       </Button>
     </Space>
   );
-};
-
-export const Main = React.memo(MainComponent);
+});
