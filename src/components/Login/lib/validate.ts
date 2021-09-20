@@ -1,14 +1,14 @@
-interface validateValues extends React.FormEvent<Element> {
+interface ValidateValues extends React.FormEvent<Element> {
   username: string;
   password: string;
 }
-interface validateErrors {
+interface ValidateErrors {
   username?: string;
   password?: string;
 }
 
-const validate = (values: validateValues): validateErrors => {
-  const errors: validateErrors = {};
+export const validate = (values: ValidateValues): ValidateErrors => {
+  const errors: ValidateErrors = {};
   if (!values.username) {
     errors.username = 'Необходимо заполнить!';
   }
@@ -18,5 +18,3 @@ const validate = (values: validateValues): validateErrors => {
 
   return errors;
 };
-
-export default validate;

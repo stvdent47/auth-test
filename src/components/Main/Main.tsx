@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useHistory } from 'react-router';
+import { Button, Space, Typography, Modal } from 'antd';
 import 'antd/dist/antd.css';
 
-import { Button, Space, Typography } from 'antd';
 const { Title } = Typography;
 
-interface IMainProps {
-  onSignout: () => void;
+interface MainProps {
+  setIsLoggedIn: (state: boolean) => void;
 }
 
-const Main: React.FC<IMainProps> = ({ onSignout }): JSX.Element => {
+const MainComponent: React.FC<MainProps> = ({ setIsLoggedIn }): JSX.Element => {
+  const history = useHistory();
+
+  const handleSignout = useCallback((): void => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    Modal.info({
+      title: 'Вы успешно вышли из системы',
+    });
+    history.push('/signin');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Space
       style={{
@@ -18,11 +31,11 @@ const Main: React.FC<IMainProps> = ({ onSignout }): JSX.Element => {
       direction='vertical'
     >
       <Title type='success'>Вы авторизованы!</Title>
-      <Button danger onClick={onSignout} size='large'>
+      <Button danger onClick={handleSignout} size='large'>
         Выйти
       </Button>
     </Space>
   );
 };
 
-export default React.memo(Main);
+export const Main = React.memo(MainComponent);
